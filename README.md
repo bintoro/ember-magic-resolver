@@ -209,7 +209,7 @@ Since multiple templates cannot be combined in a single file, there's an alterna
 /pods/posts/comments/template.hbs  
 /pods/posts/comments/template.new.hbs
 
-Observe that in the pod variant the nested segments appear *after* "template" in order to keep the filenames grouped together.
+*Observe that in the pod variant the nested segments appear __after__ "template" in order to keep the filenames grouped together.*
 
 ##### Multiple levels of nesting
 
@@ -248,23 +248,23 @@ When the route `one.two.three` is requested, the resolver will look for modules 
 
 ### Logging
 
-To see what's going on, set `ENV.APP.LOG_RESOLVER = true` in 
+To see what's going on, set `ENV.APP.LOG_RESOLVER = true` in  
 `{application root}/config/environment.js`.
 
 Interpretation:
 
 ```
-[ ] route:foo/bar ........ app/routes/foo/bar               did not find module
-                                                            /routes/foo/bar
+[ ] route:foo/bar ....... app/routes/foo/bar             did not find module
+                                                          /routes/foo/bar
 
-[ ] route:foo/bar ........ app/routes/foo ✓                 found module /routes/foo
-                                                            but no matching export
+[ ] route:foo/bar ....... app/routes/foo ✓               found module /routes/foo
+                                                          but no matching export
 
-[✓] route:foo/bar ........ app/routes/foo/bar[default]      found matching default export
-                                                            in module /routes/foo/bar
+[✓] route:foo/bar ....... app/routes/foo/bar[default]    found matching default export
+                                                          in module /routes/foo/bar
 
-[✓] route:foo/bar ........ app/routes/foo[Bar]              found matching export 'Bar'
-                                                            in module /routes/foo
+[✓] route:foo/bar ....... app/routes/foo[Bar]            found matching export 'Bar'
+                                                          in module /routes/foo
 ```
 
 

@@ -21,5 +21,6 @@
   },
   "bugs": {
     "url": "http://github.com/bintoro/ember-magic-resolver/issues"
-  }
+  },
+  "readme": "Magic Resolver adds support for named exports to the Ember CLI module system, allowing developers to group related classes into larger modules.\n\nFor the full documentation, see http://github.com/bintoro/ember-magic-resolver.\n"
 }
