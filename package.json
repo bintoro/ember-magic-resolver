@@ -1,7 +1,7 @@
 {
   "name": "ember-magic-resolver",
   "description": "Module resolver for Ember that supports named exports",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "homepage": "http://github.com/bintoro/ember-magic-resolver",
   "author": "Kalle Tuure <kalle@goodtimes.fi>",
   "license": "MIT",
@@ -22,5 +22,5 @@
   "bugs": {
     "url": "http://github.com/bintoro/ember-magic-resolver/issues"
   },
-  "readme": "Magic Resolver adds support for named exports to the Ember CLI module system, allowing developers to group related classes into larger modules.\n\nFor the full documentation, see http://github.com/bintoro/ember-magic-resolver.\n"
+  "readme": "Magic Resolver adds support for named exports\nto the Ember CLI module system, allowing developers\nto group related classes into larger modules.\n\nFor the full documentation, see\nhttp://github.com/bintoro/ember-magic-resolver.\n"
 }
