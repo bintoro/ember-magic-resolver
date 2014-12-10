@@ -1,0 +1,25 @@
+{
+  "name": "ember-magic-resolver",
+  "description": "Module resolver for Ember that supports named exports",
+  "version": "0.1.0",
+  "homepage": "http://github.com/bintoro/ember-magic-resolver",
+  "author": "Kalle Tuure <kalle@goodtimes.fi>",
+  "license": "MIT",
+  "ember-addon": {
+    "main": "ember-addon-main.js"
+  },
+  "devDependencies": {
+  },
+  "keywords": [
+    "ember",
+    "ember-addon",
+    "ember-resolver"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bintoro/ember-magic-resolver.git"
+  },
+  "bugs": {
+    "url": "http://github.com/bintoro/ember-magic-resolver/issues"
+  }
+}
