@@ -22,7 +22,7 @@ By using Magic Resolver, developers can choose to place the class on either of t
 
 ## Setup
 
-*   Install package:
+*   Install addon:
 
     ```
     npm install --save-dev ember-magic-resolver
@@ -270,5 +270,5 @@ Interpretation:
 
 ## Development status and version support
 
-The resolver has been tested on Ember 1.7.0 (Ember CLI 0.1.2) and Ember 1.8.1 (Ember CLI 0.1.4). However, it is at an experimental stage. If you find a problem, please file an issue.
+The addon has been tested on Ember versions 1.7.0–1.9.0 (Ember CLI 0.1.2–0.1.4). However, it is at an experimental stage. If you find a problem, please file an issue.
 
