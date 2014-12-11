@@ -5,16 +5,22 @@ Magic Resolver adds support for named exports to the Ember CLI module system, al
 
 ## Introduction
 
-As Ember transitions to a module-based system, the framework will generally enforce a *one class per file* parity for automatic route-based lookups. The bundled resolver — responsible for locating classes and templates — is only interested in the default export of a module, and hence each module must directly correspond to a single class for it to be recognized by the resolver.
+As Ember transitions to a module-based system, the framework will generally enforce a *one class per file* parity for automatic route-based lookups.
 
-The hierarchy that was previously reflected in the names registered on the global application instance (e.g., `App.FooBarRoute`) will now be determined by the directory structure of the source tree. Going forward, the `Route` for `foo.bar` can only be specified in the files `/foo/bar/route.js` or `/routes/foo/bar.js`.
+The bundled resolver — responsible for locating classes and templates — is only interested in the default export of each module. Consequently, a single module must directly correspond to a single class, and the module's location in the source tree will determine its location in the route hierarchy.
 
-Magic Resolver provides an alternative solution for developers who prefer to keep related logic together and avoid a proliferation of tiny files and subdirectories. It does this by making the class lookups aware of named exports and by searching every level of the default module path according to a flexible naming system.
+Magic Resolver provides an alternative for developers who prefer to keep related logic together and avoid a proliferation of tiny files and subdirectories. It does this by making the class lookups aware of named exports and by searching every level of the full route path.
 
-In the above example case, the class from `/routes/foo/bar.js` could instead be placed with other `foo`-related items in `/routes/foo.js`. As long as the exported class is named `Bar` or `FooBar`, it will be found when the resolver gets a request for `foo.bar`.
+Let's say we have a nested route `foo.bar.baz`.
+
+In the past (pre-Ember-CLI), the associated classes would be registered on a global application object under a full name like `App.FooBarBazController`.
+
+In the module-based system (introduced with Ember CLI), the standard resolver will look for that same class under the module `/controllers/foo/bar/baz.js` and its pod-based equivalent `/foo/bar/baz/controller.js` but nowhere else.
+
+By using Magic Resolver, developers can choose to place the class on either of the parent levels (`foo` and `foo/bar`) as well as the standard location `foo/bar/baz`. For example, a dozen subroutes in `/routes/users/*.js` could be consolidated into a single module `/routes/users.js`.
 
 
-## Installation
+## Setup
 
 *   Install package:
 
@@ -33,15 +39,11 @@ In the above example case, the class from `/routes/foo/bar.js` could instead be 
 
 ### Classes
 
-Let's say we have a deeply nested route `foo.bar.baz.quux`. In the past, the associated classes would be registered on the global application object under a full name like `App.FooBarBazQuuxController`.
+Classes that are placed above their standard module location are identified by their names. If a class is moved up two levels so that `bar/baz` is dropped from the module path, `Baz` or `BarBaz` would be added to the class name. This compound naming scheme is much like the pre-CLI system, except that you don't use the full path, just the omitted segment.
 
-In the new module-based system, Ember will look for the same class under the module `/controllers/foo/bar/baz/quux.js` and its pod-based equivalent `/foo/bar/baz/quux/controller.js` but nowhere else.
+In more general terms, you can remove a class from a subdirectory, place it in an upper level module, and incorporate the omitted subpath in the name of the export. The class that is the default export of the consolidated module may remain so, or it can be named along with the others.
 
-With Magic Resolver, developers can pick any option between these two extremes. You could choose to place a `FooBarBazQuuxController` class in the top-level module `/foo.js`, or you might place a `BazQuuxController` (or simply `QuuxController`) in the module `/foo/bar/baz.js`.
-
-In more general terms, you can remove a class from a subdirectory, place it in an upper level module, and incorporate the omitted subpath in the name of the exported class.
-
-Modules are searched in a descending order of specificity. The most deeply nested module `/controllers/foo/bar/baz/quux` would be looked up first, meaning that Magic Resolver is directly compatible with the bundled resolver and merely extends its lookup logic when nothing is found in the default location.
+Modules are searched in a descending order of specificity. The most deeply nested module `/controllers/foo/bar/baz` would be looked up first, meaning that Magic Resolver is directly compatible with the bundled resolver and simply extends its lookup logic when nothing is found in the standard location.
 
 #### Classic directory structure
 
@@ -71,7 +73,7 @@ var NewRoute = Ember.Route.extend({ ... }); // posts.comments.new
 export {BaseRoute, NewRoute}
 ```
 
-The base name may be prefixed to the class names. The above could also be written as:
+Alternatively, if you don't like `Base...`, the base name may be prefixed to the class names:
 
 ```javascript
 var CommentsRoute = Ember.Route.extend({ ... }); // posts.comments
@@ -81,7 +83,7 @@ var CommentsNewRoute = Ember.Route.extend({ ... }); // posts.comments.new
 export {CommentsRoute, CommentsNewRoute}
 ```
 
-A third option is to treat the base route as a default export and only the nested routes as named exports:
+A third option is to leave the base class as a default export and only treat the nested routes as named exports:
 
 ```javascript
 export default Ember.Route.extend({ ... }); // posts.comments
@@ -102,9 +104,7 @@ var BaseRoute = Ember.Route.extend({ ... }); // posts
 
 var CommentsRoute = Ember.Route.extend({ ... }); // posts.comments
 
-var CommentsNewRoute = Ember.Route.extend({ // posts.comments.new
-    ...
-});
+var CommentsNewRoute = Ember.Route.extend({ ... }); // posts.comments.new
 
 export {BaseRoute, CommentsRoute, CommentsNewRoute}
 ```
@@ -177,7 +177,7 @@ export {BaseRoute, CommentsRoute, CommentsNewRoute}
 
 ### Templates
 
-Since multiple templates cannot be combined in a single file, there's an alternative method of storing a template on its parent level in the filesystem: express the path segments *in the filename* separated by a dot.
+Since multiple templates cannot be combined in a single file, there's an alternative method of storing a template on its parent level in the filesystem: express the path segments *in the filename* separated by dots.
 
 #### Classic directory structure
 
@@ -255,16 +255,16 @@ Interpretation:
 
 ```
 [ ] route:foo/bar ....... app/routes/foo/bar             did not find module
-                                                          /routes/foo/bar
+                                                         /routes/foo/bar
 
 [ ] route:foo/bar ....... app/routes/foo ✓               found module /routes/foo
-                                                          but no matching export
+                                                         but no matching export
 
 [✓] route:foo/bar ....... app/routes/foo/bar[default]    found matching default export
-                                                          in module /routes/foo/bar
+                                                         in module /routes/foo/bar
 
 [✓] route:foo/bar ....... app/routes/foo[Bar]            found matching export 'Bar'
-                                                          in module /routes/foo
+                                                         in module /routes/foo
 ```
 
 
