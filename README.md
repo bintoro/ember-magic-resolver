@@ -19,6 +19,8 @@ In the module-based system (introduced with Ember CLI), the standard resolver wi
 
 By using Magic Resolver, developers can choose to place the class on either of the parent levels (`foo` and `foo/bar`) as well as the standard location `foo/bar/baz`. For example, a dozen subroutes in `/routes/users/*.js` could be consolidated into a single module `/routes/users.js`.
 
+This approach, therefore, combines the best of both worlds. It preserves the namespacing benefits of the ES6 module system while adding support for arbitrarily large modules.
+
 
 ## Setup
 
@@ -220,9 +222,7 @@ Since multiple templates cannot be combined in a single file, there's an alterna
 
 ## Module matching logic
 
-### A full example
-
-When the route `one.two.three` is requested, the resolver will look for modules and exports in the following order (export names in brackets):
+Magic Resolver does not undo the namespacing capabilities of ES6 modules. When the route `one.two.three` is requested, the resolver will look for modules and exports in the following order (export names in brackets):
 
 ```
 /{podDir}/one/two/three/route.js [default]
@@ -245,6 +245,11 @@ When the route `one.two.three` is requested, the resolver will look for modules 
 /routes/one.js [TwoThreeRoute]
 /routes/one.js [OneTwoThreeRoute]
 ```
+
+A module's path will have to exactly match the beginning portion of the requested route for the module to be included in the search. For example, a class named `OneTwoThree` might exist in both `/routes/one.js` and `/routes/one-two.js`. There is no naming conflict because only one of the modules will be searched, depending on if the resolution request begins with `route:one/` or `route:one-two/`.
+
+There is a caveat, though. In case your application contains routes ending in "-error" or "-loading" (including the hyphen), beware of using named exports for the resulting classes. Ember implicitly looks for routes with the names "error" and "loading", and as a result a route like `foo.bar-loading` may cause a conflict if defined as `BarLoading` in module `foo`. This is because the class would inadvertently match a lookup for `foo.bar.loading` if no actual loading route has been defined under `foo/bar`.
+
 
 ### Logging
 
